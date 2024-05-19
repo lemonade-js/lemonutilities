@@ -9,7 +9,7 @@ Go to your console, and type the following commands in order
 cd "C:/path/to/your/project"
 ```
 ```bash
-npm i @lemonade.js/lemonutils
+npm install lemonutilities
 ```
 
 # Functions
