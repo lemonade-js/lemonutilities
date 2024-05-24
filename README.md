@@ -1,8 +1,11 @@
 ﻿# LemonUtils
 Simple JavaScript library that does a bunch of stuff.
 
-# About
+# Setup
+
+
 ## Installation
+
 Go to your console, and type the following commands in order
 
 ```bash
@@ -11,6 +14,15 @@ cd "C:/path/to/your/project"
 ```bash
 npm install lemonutilities
 ```
+
+## How to Use
+In your main JavaScript file, write the following
+
+```javascript
+const lemonutils = require('lemonutilities');
+```
+
+Down below, you will find a list of functions LemonUtils has to offer.
 
 # Functions
 
@@ -24,7 +36,7 @@ npm install lemonutilities
 - Returns (`string`): File contents
 - Example:
 ```javascript
-const message = LemonUtils.readFile('./message.txt');
+const message = lemonutils.readFile('./message.txt');
 
 // Hello, World!
 console.log(message);
@@ -39,7 +51,7 @@ console.log(message);
 ```javascript
 const message = 'Goodbye, World :(';
 
-LemonUtils.writeFile('./message.txt', message);
+lemonutils.writeFile('./message.txt', message);
 ```
 
 ### readJSON(filePath)
@@ -49,7 +61,7 @@ LemonUtils.writeFile('./message.txt', message);
 - Returns (`object/array`): File contents
 - Example:
 ```javascript
-const JSONDat = LemonUtils.readFile('./data.json');
+const JSONDat = lemonutils.readFile('./data.json');
 
 // {message:"Hello, World!"}
 console.log(JSONDat);
@@ -64,7 +76,7 @@ console.log(JSONDat);
 ```javascript
 const JSONDat = {message:"Goodbye, World :("};
 
-LemonUtils.writeFile('./data.json', JSONDat);
+lemonutils.writeFile('./data.json', JSONDat);
 ```
 
 ### checkPathExists(filePath)
@@ -74,7 +86,7 @@ LemonUtils.writeFile('./data.json', JSONDat);
 - Returns (`bool`): true/false
 - Example:
 ```javascript
-if (LemonUtils.checkPathExists('./goober/cat.png')) {
+if (lemonutils.checkPathExists('./goober/cat.png')) {
     console.log('cat.png exists!');
 } else {
     console.log('cat.png does not exist :(');
@@ -89,7 +101,7 @@ if (LemonUtils.checkPathExists('./goober/cat.png')) {
 - Returns (`array`): Array of all file names
 - Example:
 ```javascript
-const images = LemonUtils.getFiles('./goober', '.png');
+const images = lemonutils.getFiles('./goober', '.png');
 
 // ['bird.png', 'cat.png', 'dog.png', 'sillygoober.png']
 console.log(images);
@@ -102,7 +114,7 @@ console.log(images);
 - Returns (`array`): Array of all subfolder names
 - Example:
 ```javascript
-const subfolders = LemonUtils.getFiles('./goober');
+const subfolders = lemonutils.getFiles('./goober');
 
 // ['extra silly', 'very gooberish']
 console.log(subfolders);
@@ -115,7 +127,7 @@ console.log(subfolders);
     - `destinationFolderPath` (`string`): Folder to move the file to
 - Example:
 ```javascript
-LemonUtils.moveFile('./goober/cat.png', './goober/extra silly');
+lemonutils.moveFile('./goober/cat.png', './goober/extra silly');
 ```
 
 ### renameFile(filePath, newFileName)
@@ -125,7 +137,7 @@ LemonUtils.moveFile('./goober/cat.png', './goober/extra silly');
     - `newFileName` (`string`): New file name
 - Example:
 ```javascript
-LemonUtils.renameFile('./goober/extra silly/cat.png', 'silly car.png');
+lemonutils.renameFile('./goober/extra silly/cat.png', 'silly car.png');
 
 ```
 
@@ -135,7 +147,7 @@ LemonUtils.renameFile('./goober/extra silly/cat.png', 'silly car.png');
     - `filePath` (`string`): File to delete
 - Example:
 ```javascript
-LemonUtils.deleteFile('./message.txt');
+lemonutils.deleteFile('./message.txt');
 ```
 
 ### createFile(filePath)
@@ -144,7 +156,7 @@ LemonUtils.deleteFile('./message.txt');
     - `filePath` (`string`): Path and file name
 - Example:
 ```javascript
-LemonUtils.createFile('./message.txt');
+lemonutils.createFile('./message.txt');
 ```
 
 ### createDirectory(directoryPath)
@@ -153,7 +165,7 @@ LemonUtils.createFile('./message.txt');
     - `directoryPath` (`string`): Directory name
 - Example:
 ```javascript
-LemonUtils.createDirectory('./goober/extra silly/VERY silly');
+lemonutils.createDirectory('./goober/extra silly/VERY silly');
 ```
 
 ### copyFile(filePath, copiedFilePath)
@@ -163,7 +175,7 @@ LemonUtils.createDirectory('./goober/extra silly/VERY silly');
     - `copiedFilePath` (`string`): New file path
 - Example:
 ```javascript
-LemonUtils.copyFile('./goober/very silly/silly car.png', './goober of the day/silly car.png');
+lemonutils.copyFile('./goober/very silly/silly car.png', './goober of the day/silly car.png');
 ```
 
 ### calculateFileSize(filePath)
@@ -173,7 +185,7 @@ LemonUtils.copyFile('./goober/very silly/silly car.png', './goober of the day/si
 - Returns (`string`): Byte size
 - Example:
 ```javascript
-const size = LemonUtils.calculateFileSize('./goober/bird.png');
+const size = lemonutils.calculateFileSize('./goober/bird.png');
 
 
 // bird.png is 295419 bytes. (295.419KB)
@@ -191,7 +203,7 @@ console.log(`bird.png is ${size} bytes. (${size/1000}KB)`);
 - Returns (`num`): Random number
 - Example:
 ```javascript
-const num = LemonUtils.getRandomNum(0, 10);
+const num = lemonutils.getRandomNum(0, 10);
 
 console.log(num);
 ```
@@ -204,7 +216,7 @@ console.log(num);
 - Returns (`num`): Random number
 - Example:
 ```javascript
-const num = LemonUtils.getRandomInt(0, 10);
+const num = lemonutils.getRandomInt(0, 10);
 
 console.log(num);
 ```
@@ -217,7 +229,7 @@ console.log(num);
 - Example:
 ```javascript
 const items = ['goober', 'cat', 'dog', 'bird', true, false, 7, 8.5];
-const item = LemonUtils.getRandomItem(items);
+const item = lemonutils.getRandomItem(items);
 
 console.log(item);
 ```
@@ -230,7 +242,7 @@ console.log(item);
 - Example:
 ```javascript
 const items = ['goober', 'cat', 'dog', 'bird', true, false, 7, 8.5];
-const shuffledItems = LemonUtils.arrayShuffle(items);
+const shuffledItems = lemonutils.arrayShuffle(items);
 
 console.log(shuffledItems);
 ```
@@ -242,7 +254,7 @@ console.log(shuffledItems);
 - Returns (`string`): Generated UUID
 - Example:
 ```javascript
-const uuid = LemonUtils.UUID(4);
+const uuid = lemonutils.UUID(4);
 
 console.log(uuid);
 ```
@@ -254,7 +266,7 @@ console.log(uuid);
 - Returns (`string`): Generated token
 - Example:
 ```javascript
-const token = LemonUtils.generateToken('LEM-');
+const token = lemonutils.generateToken('LEM-');
 
 console.log(token);
 ```
@@ -269,7 +281,7 @@ console.log(token);
 ```javascript
 console.log('is the cat a goober? [y/n]\n\n');
 
-LemonUtils.consoleInput().then(response =>  {
+lemonutils.consoleInput().then(response =>  {
     if (response.toLowerCase == 'y') {
         console.log('YAYAYAYAYAYY');
     } else {
@@ -285,7 +297,7 @@ console.log('is the cat a goober? [y/n]\n\n');
 
 // This function needs to be async
 async function askQuestion() {
-    const response = await LemonUtils.consoleInput();
+    const response = await lemonutils.consoleInput();
 
     if (response.toLowerCase == 'y') {
         console.log('YAYAYAYAYAYY');
@@ -295,4 +307,16 @@ async function askQuestion() {
 
     console.log('Gets printed after the user hits enter.');
 }
+```
+
+### editLastLine(newLine)
+-   Description: Edits the last line printed to the console
+-   Parameters:
+    - `newLine` (`string`): New console text
+- Example:
+```javascript
+console.log('Not silly :(');
+setTimeout(() => {
+    lemonutils.editLastLine('Silliest as can be :3');
+}, 2000);
 ```
