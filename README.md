@@ -276,16 +276,23 @@ LemonUtils.consoleInput().then(response =>  {
         console.log('Aw man :(');
     }
 });
+
+console.log('Gets printed after, but not before the user hits enter.');
 ```
 OR
 ```javascript
 console.log('is the cat a goober? [y/n]\n\n');
 
-const response = await LemonUtils.consoleInput();
+// This function needs to be async
+async function askQuestion() {
+    const response = await LemonUtils.consoleInput();
 
-if (response.toLowerCase == 'y') {
-    console.log('YAYAYAYAYAYY');
-} else {
-    console.log('Aw man :(');
+    if (response.toLowerCase == 'y') {
+        console.log('YAYAYAYAYAYY');
+    } else {
+        console.log('Aw man :(');
+    }
+
+    console.log('Gets printed after the user hits enter.');
 }
 ```
