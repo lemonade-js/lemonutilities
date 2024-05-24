@@ -277,7 +277,7 @@ LemonUtils.consoleInput().then(response =>  {
     }
 });
 
-console.log('Gets printed after, but not before the user hits enter.');
+console.log('Gets printed after, but before the user hits enter.');
 ```
 OR
 ```javascript
