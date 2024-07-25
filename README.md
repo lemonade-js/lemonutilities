@@ -1,4 +1,4 @@
-﻿# LemonUtils
+﻿# LemonUtilities
 Simple JavaScript library that does a bunch of stuff.
 
 # Setup
