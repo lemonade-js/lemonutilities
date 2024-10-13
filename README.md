@@ -1,5 +1,5 @@
-﻿# LemonUtilities
-Simple JavaScript library that does a bunch of stuff.
+# LemonUtilities
+LemonUtilities is a lightweight and simple JavaScript library for file management, randomization, and for CLIs (Console User Interfaces).
 
 # Setup
 
@@ -19,7 +19,7 @@ npm install lemonutilities
 In your main JavaScript file, write the following
 
 ```javascript
-const lemonutils = require('lemonutilities');
+const {file, random, cli} = require('lemonutilities');
 ```
 
 Down below, you will find a list of functions LemonUtils has to offer.
@@ -29,20 +29,20 @@ Down below, you will find a list of functions LemonUtils has to offer.
 
 ## File Management
 
-### readFile(filePath)
+### read(filePath)
 -   Description: returns file contents from a path.
 -   Parameters:
     - `filePath` (`string`): Path to file
 - Returns (`string`): File contents
 - Example:
 ```javascript
-const message = lemonutils.readFile('./message.txt');
+const message = file.read('message.txt');
 
 // Hello, World!
 console.log(message);
 ```
 
-### writeFile(filePath, content)
+### write(filePath, content)
 -   Description: writes data to a file.
 -   Parameters:
     - `filePath` (`string`): Path to file
@@ -51,42 +51,31 @@ console.log(message);
 ```javascript
 const message = 'Goodbye, World :(';
 
-lemonutils.writeFile('./message.txt', message);
+file.write('message.txt', message);
 ```
 
-### readJSON(filePath)
--   Description: returns file contents from a path.
+### checkPathAccessible(directoryPath)
+-   Description: Check if a path is accessible by your script
 -   Parameters:
-    - `filePath` (`string`): Path to file
-- Returns (`object/array`): File contents
-- Example:
-```javascript
-const JSONDat = lemonutils.readFile('./data.json');
-
-// {message:"Hello, World!"}
-console.log(JSONDat);
-```
-
-### writeJSON(filePath, content)
--   Description: writes JSON to a file.
--   Parameters:
-    - `filePath` (`string`): Path to file
-    - `content` (`object/array`): Content to write to file as JSON
-- Example:
-```javascript
-const JSONDat = {message:"Goodbye, World :("};
-
-lemonutils.writeFile('./data.json', JSONDat);
-```
-
-### checkPathExists(filePath)
--   Description: Check if a path exists
--   Parameters:
-    - `filePath` (`string`): Path to check
+    - `directoryPath` (`string`): Path to check
 - Returns (`bool`): true/false
 - Example:
 ```javascript
-if (lemonutils.checkPathExists('./goober/cat.png')) {
+if (file.checkPathExists('goober/cat.png')) {
+    console.log('cat.png exists!');
+} else {
+    console.log('cat.png does not exist :(');
+}
+```
+
+### checkPathExists(directoryPath)
+-   Description: Check if a path exists
+-   Parameters:
+    - `directoryPath` (`string`): Path to check
+- Returns (`bool`): true/false
+- Example:
+```javascript
+if (file.checkPathExists('goober/cat.png')) {
     console.log('cat.png exists!');
 } else {
     console.log('cat.png does not exist :(');
@@ -101,53 +90,53 @@ if (lemonutils.checkPathExists('./goober/cat.png')) {
 - Returns (`array`): Array of all file names
 - Example:
 ```javascript
-const images = lemonutils.getFiles('./goober', '.png');
+const images = file.getFiles('goober', 'png');
 
 // ['bird.png', 'cat.png', 'dog.png', 'sillygoober.png']
 console.log(images);
 ```
 
-### getDirectories(directoryPath)
+### getSubFolders(directoryPath)
 -   Description: Gets subfolders from a folder or directory
 -   Parameters:
     - `directoryPath` (`string`): Path to check
 - Returns (`array`): Array of all subfolder names
 - Example:
 ```javascript
-const subfolders = lemonutils.getFiles('./goober');
+const subfolders = file.getSubFolders('goober');
 
 // ['extra silly', 'very gooberish']
 console.log(subfolders);
 ```
 
-### moveFile(filePath, destinationFolderPath)
--   Description: Moves a file
+### moveDir(directoryPath, destinationFolderPath)
+-   Description: Moves a file, or an entire folder
 -   Parameters:
-    - `filePath` (`string`): Path to file
+    - `directoryPath` (`string`): Path to file
     - `destinationFolderPath` (`string`): Folder to move the file to
 - Example:
 ```javascript
-lemonutils.moveFile('./goober/cat.png', './goober/extra silly');
+file.moveDir('goober/cat.png', 'goober/extra silly');
 ```
 
-### renameFile(filePath, newFileName)
--   Description: Renames a file
+### renameDir(directoryPath, newFileName)
+-   Description: Renames a file, or a folder
 -   Parameters:
-    - `filePath` (`string`): File to rename
+    - `directoryPath` (`string`): File to rename
     - `newFileName` (`string`): New file name
 - Example:
 ```javascript
-lemonutils.renameFile('./goober/extra silly/cat.png', 'silly car.png');
+file.renameDir('goober/extra silly/cat.png', 'silly car.png');
 
 ```
 
-### deleteFile(filePath)
--   Description: Deletes a file
+### deleteDir(directoryPath) (DANGEROUS)
+-   Description: Deletes a file, or an entire folder
 -   Parameters:
-    - `filePath` (`string`): File to delete
+    - `directoryPath` (`string`): File to delete
 - Example:
 ```javascript
-lemonutils.deleteFile('./message.txt');
+file.deleteDir('message.txt');
 ```
 
 ### createFile(filePath)
@@ -156,36 +145,46 @@ lemonutils.deleteFile('./message.txt');
     - `filePath` (`string`): Path and file name
 - Example:
 ```javascript
-lemonutils.createFile('./message.txt');
+file.createFile('message.txt');
 ```
 
-### createDirectory(directoryPath)
+### createDir(directoryPath)
 -   Description: Creates a directory
 -   Parameters:
     - `directoryPath` (`string`): Directory name
 - Example:
 ```javascript
-lemonutils.createDirectory('./goober/extra silly/VERY silly');
+file.createDir('goober/extra silly/VERY silly');
 ```
 
-### copyFile(filePath, copiedFilePath)
--   Description: Copies a file
+### cloneFile(filePath, destinationFolderPath)
+-   Description: Clones a file to a specified destination
 -   Parameters:
     - `filePath` (`string`): Path to file
-    - `copiedFilePath` (`string`): New file path
+    - `destinationFolderPath` (`string`): New file path
 - Example:
 ```javascript
-lemonutils.copyFile('./goober/very silly/silly car.png', './goober of the day/silly car.png');
+file.cloneFile('goober/very silly/silly car.png', 'goober of the day/silly car.png');
 ```
 
-### calculateFileSize(filePath)
--   Description: Calculates the size of a file in bytes
+### cloneDir(directoryPath, destinationFolderPath)
+-   Description: Clones a folder and all contents to a specified destination
 -   Parameters:
-    - `filePath` (`string`): Path to file
+    - `directoryPath` (`string`): Path to file
+    - `destinationFolderPath` (`string`): New file path
+- Example:
+```javascript
+file.cloneDir('goober/very silly/silly car.png', 'goober of the day/silly car.png');
+```
+
+### calculateDirSize(directoryPath)
+-   Description: Calculates the size of a file or folder contents in bytes
+-   Parameters:
+    - `directoryPath` (`string`): Path to file
 - Returns (`string`): Byte size
 - Example:
 ```javascript
-const size = lemonutils.calculateFileSize('./goober/bird.png');
+const size = file.calculateDirSize('goober/bird.png');
 
 
 // bird.png is 295419 bytes. (295.419KB)
@@ -203,7 +202,7 @@ console.log(`bird.png is ${size} bytes. (${size/1000}KB)`);
 - Returns (`num`): Random number
 - Example:
 ```javascript
-const num = lemonutils.getRandomNum(0, 10);
+const num = random.getRandomNum(0, 10);
 
 console.log(num);
 ```
@@ -216,7 +215,7 @@ console.log(num);
 - Returns (`num`): Random number
 - Example:
 ```javascript
-const num = lemonutils.getRandomInt(0, 10);
+const num = random.getRandomInt(0, 10);
 
 console.log(num);
 ```
@@ -229,7 +228,7 @@ console.log(num);
 - Example:
 ```javascript
 const items = ['goober', 'cat', 'dog', 'bird', true, false, 7, 8.5];
-const item = lemonutils.getRandomItem(items);
+const item = random.getRandomItem(items);
 
 console.log(item);
 ```
@@ -238,25 +237,13 @@ console.log(item);
 -   Description: Shuffles an array
 -   Parameters:
     - `array` (`array`):
-- Returns (``): Shuffled array
+- Returns (`array`): Shuffled array
 - Example:
 ```javascript
 const items = ['goober', 'cat', 'dog', 'bird', true, false, 7, 8.5];
-const shuffledItems = lemonutils.arrayShuffle(items);
+const shuffledItems = random.arrayShuffle(items);
 
 console.log(shuffledItems);
-```
-
-### UUID(version)
--   Description: Generates a UUID
--   Parameters:
-    - `version` (`number`): UUID version to generate (currently supports version 4)
-- Returns (`string`): Generated UUID
-- Example:
-```javascript
-const uuid = lemonutils.UUID(4);
-
-console.log(uuid);
 ```
 
 ### generateToken(prefix)
@@ -266,7 +253,7 @@ console.log(uuid);
 - Returns (`string`): Generated token
 - Example:
 ```javascript
-const token = lemonutils.generateToken('LEM-');
+const token = random.generateToken('LEM-');
 
 console.log(token);
 ```
@@ -274,14 +261,14 @@ console.log(token);
 
 ## Inputs
 
-### consoleInput()
+### consoleInput() (async function)
 -   Description: Asks user for input
 - Returns (`string`): Response
 - Example:
 ```javascript
 console.log('is the cat a goober? [y/n]\n\n');
 
-lemonutils.consoleInput().then(response =>  {
+cli.consoleInput().then(response =>  {
     if (response.toLowerCase == 'y') {
         console.log('YAYAYAYAYAYY');
     } else {
@@ -297,7 +284,7 @@ console.log('is the cat a goober? [y/n]\n\n');
 
 // This function needs to be async
 async function askQuestion() {
-    const response = await lemonutils.consoleInput();
+    const response = await cli.consoleInput();
 
     if (response.toLowerCase == 'y') {
         console.log('YAYAYAYAYAYY');
@@ -307,6 +294,8 @@ async function askQuestion() {
 
     console.log('Gets printed after the user hits enter.');
 }
+
+askQuestion();
 ```
 
 ### editLastLine(newLine)
@@ -317,6 +306,35 @@ async function askQuestion() {
 ```javascript
 console.log('Not silly :(');
 setTimeout(() => {
-    lemonutils.editLastLine('Silliest as can be :3');
+    cli.editLastLine('Silliest as can be :3');
 }, 2000);
+```
+
+### wait(seconds) (async function)
+-   Description: Waits a specified amount of time in seconds before allowing further code to run
+-   Parameters:
+    - `seconds` (`number`): Time to wait in seconds
+- Example:
+```javascript
+// This function needs to be async
+async function waitExample() {
+    console.log('Cloning folder in 5 seconds...');
+
+    await cli.wait(5);
+
+    file.cloneDir('goober/very silly', 'important');
+}
+
+waitExample();
+```
+
+### pause()
+-   Description: Stops further code from running, and displays a "hit any key to continue" message
+- Example:
+```javascript
+console.log('Done!');
+
+cli.pause();
+
+console.log('But there\'s more!');
 ```
