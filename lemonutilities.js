@@ -3,12 +3,13 @@
 | |__ | ===||  \/  |/ () \|  \| ||  |  ||_   _|| || |__ | ||_   _|| || ===| (_ (_`
 |____||____||_|\/|_|\____/|_|\__| \___/   |_|  |_||____||_|  |_|  |_||____|.__)__)
 
--- v2.0.1
+-- v2.1.0
 */
 
 const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
+const { inflate } = require('zlib');
 
 const file = {
     read(filePath) {
@@ -35,21 +36,11 @@ const file = {
     },
 
     checkPathAccessible(directoryPath) {
-        try {
-            fs.accessSync(directoryPath);
-            return true;
-        } catch {
-            return false;
-        }
+        fs.accessSync(directoryPath);
     },
 
     checkPathExists(directoryPath) {
-        try {
-            fs.existsSync(directoryPath);
-            return true;
-        } catch {
-            return false;
-        }
+        fs.existsSync(directoryPath);
     },
 
     getFiles(directoryPath, fileExtension = '') {
@@ -190,33 +181,33 @@ const file = {
                 console.error('lemonutilities: Cannot clone directory: Specified source directory does not exist or is not accessible.');
                 return;
             }
-
+      
             if (!this.checkPathAccessible(destinationFolderPath)) {
                 console.error('lemonutilities: Cannot clone directory: Specified destination directory does not exist or is not accessible.');
                 return;
             }
-
+      
             const dirName = path.basename(directoryPath);
             const destinationFilePath = path.join(destinationFolderPath, dirName);
-
+      
             if (this.checkPathExists(destinationFilePath)) {
                 console.error('lemonutilities: Cannot clone directory: Another directory with the same name already exists.');
                 return;
             }
-
+      
             fs.mkdirSync(destinationFilePath);
-
+      
             const items = fs.readdirSync(directoryPath);
             for (const item of items) {
                 const sourceItemPath = path.join(directoryPath, item);
                 const destinationItemPath = path.join(destinationFilePath, item);
-
+      
                 const itemStats = fs.statSync(sourceItemPath);
-
-                if (itemStats.isDirectory()) {
-                    this.cloneDir(sourceItemPath, destinationItemPath);
-                } else if (itemStats.isFile()) {
-                    this.cloneFile(sourceItemPath, destinationFilePath);
+      
+            if (itemStats.isDirectory()) {
+                this.cloneDir(sourceItemPath, destinationItemPath);
+            } else if (itemStats.isFile()) {
+                    this.cloneFile(sourceItemPath, destinationItemPath);
                 }
             }
         } catch (error) {
@@ -251,15 +242,15 @@ const file = {
 }
 
 const random = {
-    getRandomNum(max, min) {
+    getNum(max, min) {
         return Math.random() * (max - min) + min;
     },
 
-    getRandomInt(max, min) {
+    getInt(max, min) {
         return Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min) + 1)) + Math.ceil(min);
     },
 
-    getRandomItem(array) {
+    getItem(array) {
         return array[this.getRandomInt(0, array.length - 1)];
     },
 
@@ -282,11 +273,26 @@ const random = {
         token += `-${timestamp.toString().substring(0, timestamp.toString().length - 3)}`;
 
         return token;
+    },
+
+    getChance(...chances) {
+        const totalProbability = chances.reduce((sum, prob) => sum + prob, 0);
+        const randomValue = this.getRandomNum(0, totalProbability);
+        
+        let cumulativeProbability = 0;
+
+        for (let i = 0; i < chances.length; i++) {
+            cumulativeProbability += chances[i];
+
+            if (randomValue < cumulativeProbability) {
+                return i;
+            }
+        }
     }
 }
 
 const cli = {
-    consoleInput() {
+    async consoleInput() {
         const rl = readline.createInterface({
             input: process.stdin,
             output: process.stdout
@@ -301,19 +307,19 @@ const cli = {
     },
 
     editLastLine(text) {
-        process.stdout.clearLine(0);
+        process.stdout.clearLine(-1);
         process.stdout.cursorTo(0);
         process.stdout.write(text);
     },
 
     async wait(seconds) {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
             let remaining = seconds;
 
-            console.log(`Waiting... ${remainingTime}`);
+            console.log(`\nWaiting... ${remainingTime}`);
 
             const countdown = setInterval(() => {
-                this.editLastLine(`Waiting... ${remainingTime}`);
+                this.editLastLine(`Waiting... ${remaining}`);
                 remaining--;
 
                 if (remaining <= 0) {
@@ -324,12 +330,19 @@ const cli = {
         });
     },
 
-    pause() {
-        console.log('\nPress any key to continue...');
+    async pause() {
+        return new Promise(resolve => {
+            console.log('\nPress any key to continue...');
 
-        process.stdin.setRawMode(true);
-        process.stdin.resume();
-        process.stdin.on('data', () => process.exit(0));
+            process.stdin.setRawMode(true);
+            process.stdin.resume();
+
+            process.stdin.once('data', () => {
+                process.stdin.setRawMode(false);
+                process.stdin.pause();
+                resolve();
+            });
+        });
     }
 }
 
