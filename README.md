@@ -194,7 +194,7 @@ console.log(`bird.png is ${size} bytes. (${size/1000}KB)`);
 
 ## Randomness
 
-### getRandomNum(min, max)
+### getNum(min, max)
 -   Description: Returns a random number
 -   Parameters:
     - `min` (`number`): Minimum value
@@ -202,12 +202,12 @@ console.log(`bird.png is ${size} bytes. (${size/1000}KB)`);
 - Returns (`num`): Random number
 - Example:
 ```javascript
-const num = random.getRandomNum(0, 10);
+const num = random.getNum(0, 10);
 
 console.log(num);
 ```
 
-### getRandomInt(min, max)
+### getInt(min, max)
 -   Description: Returns a random whole number
 -   Parameters:
     - `min` (`number`): Minimum value
@@ -215,12 +215,12 @@ console.log(num);
 - Returns (`num`): Random number
 - Example:
 ```javascript
-const num = random.getRandomInt(0, 10);
+const num = random.getInt(0, 10);
 
 console.log(num);
 ```
 
-### getRandomItem(array)
+### getItem(array)
 -   Description: Returns a random item from an array
 -   Parameters:
     - `array` (`array`): Array to get item from
@@ -228,7 +228,7 @@ console.log(num);
 - Example:
 ```javascript
 const items = ['goober', 'cat', 'dog', 'bird', true, false, 7, 8.5];
-const item = random.getRandomItem(items);
+const item = random.getItem(items);
 
 console.log(item);
 ```
@@ -244,6 +244,23 @@ const items = ['goober', 'cat', 'dog', 'bird', true, false, 7, 8.5];
 const shuffledItems = random.arrayShuffle(items);
 
 console.log(shuffledItems);
+```
+
+### getChance(...chances)
+-   Description: Generates a random chance based on the inputed values
+-   Parameters:
+    - `...chances` (`number`): Chances
+- Example:
+```javascript
+const animals = ['cat', 'dog', 'bird'];
+const chance = random.getChance(10, 8, 3);
+
+/*
+10 in 21 chance it will return 0,
+8 in 21 for 1,
+and 3 in 21 for 2
+*/
+console.log(animals[chance]);
 ```
 
 ### generateToken(prefix)
