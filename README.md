@@ -327,17 +327,18 @@ setTimeout(() => {
 }, 2000);
 ```
 
-### wait(seconds) (async function)
+### wait(seconds, showCountdown) (async function)
 -   Description: Waits a specified amount of time in seconds before allowing further code to run
 -   Parameters:
     - `seconds` (`number`): Time to wait in seconds
+    - `showCountdown` (`bool`, optional): Shows "Waiting... x" message
 - Example:
 ```javascript
 // This function needs to be async
 async function waitExample() {
     console.log('Cloning folder in 5 seconds...');
 
-    await cli.wait(5);
+    await cli.wait(5, true);
 
     file.cloneDir('goober/very silly', 'important');
 }
