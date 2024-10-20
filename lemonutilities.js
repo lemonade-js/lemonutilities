@@ -3,7 +3,7 @@
 | |__ | ===||  \/  |/ () \|  \| ||  |  ||_   _|| || |__ | ||_   _|| || ===| (_ (_`
 |____||____||_|\/|_|\____/|_|\__| \___/   |_|  |_||____||_|  |_|  |_||____|.__)__)
 
--- v2.1.0
+-- v2.1.1
 */
 
 const fs = require('fs');
@@ -36,11 +36,20 @@ const file = {
     },
 
     checkPathAccessible(directoryPath) {
-        fs.accessSync(directoryPath);
+        try {
+            fs.accessSync(directoryPath);
+            return true;
+        } catch {
+            return false;
+        }
     },
 
     checkPathExists(directoryPath) {
-        fs.existsSync(directoryPath);
+        try {
+            return fs.existsSync(directoryPath);
+        } catch {
+            return false;
+        }
     },
 
     getFiles(directoryPath, fileExtension = '') {
@@ -105,25 +114,29 @@ const file = {
     },
 
     renameDir(directoryPath, newDirName) {
-        if (!this.checkPathAccessible(directoryPath)) {
-            console.error('lemonutilities: Cannot rename directory: Specified source directory does not exist or is not accessible.');
-            return;
-        }
-
-        const baseDirName = path.dirname(directoryPath);
-        const newName = path.join(baseDirName, newDirName);
-
-        if (this.checkPathExists(newName)) {
-            console.error('lemonutilities: Cannot rename directory: Another directory with the same name already exists.');
-            return;
-        }
-
-        fs.rename(directoryPath, newName, (error) => {
-            if (error) {
-                console.error('lemonutilities: Cannot rename directory:', error);
+        try {
+            if (!this.checkPathAccessible(directoryPath)) {
+                console.error('lemonutilities: Cannot rename directory: Specified source directory does not exist or is not accessible.');
+                return;
             }
-        });
-    },
+    
+            const baseDirName = path.dirname(directoryPath);
+            const newName = path.join(baseDirName, newDirName);
+    
+            if (this.checkPathExists(newName)) {
+                console.error('lemonutilities: Cannot rename directory: Another directory with the same name already exists.');
+                return;
+            }
+    
+            fs.rename(directoryPath, newName, (error) => {
+                if (error) {
+                    console.error('lemonutilities: Cannot rename directory:', error);
+                }
+            });
+        } catch (error) {
+            console.error('lemonutilities: Error renaming directory:', error);
+        }
+    },    
 
     deleteDir(directoryPath) {
         try {
@@ -149,31 +162,28 @@ const file = {
         }
     },
 
-    cloneFile(filePath, destinationFolderPath) {
+    cloneFile(filePath, destinationFilePath) {
         try {
             if (!this.checkPathAccessible(filePath)) {
                 console.error('lemonutilities: Cannot clone file: Specified source file does not exist or is not accessible.');
                 return;
             }
-
-            if (!this.checkPathAccessible(destinationFolderPath)) {
+    
+            const destinationDir = path.dirname(destinationFilePath);
+            if (!this.checkPathExists(destinationDir)) {
+                fs.mkdirSync(destinationDir, { recursive: true });
+            }
+    
+            if (!this.checkPathAccessible(destinationDir)) {
                 console.error('lemonutilities: Cannot clone file: Specified destination directory does not exist or is not accessible.');
                 return;
             }
-
-            const fileName = path.basename(filePath);
-            const destinationFilePath = path.join(destinationFolderPath, fileName);
-
-            if (this.checkPathExists(destinationFilePath)) {
-                console.error('lemonutilities: Cannot clone file: A file with the same name already exists.');
-                return;
-            }
-
+    
             fs.copyFileSync(filePath, destinationFilePath);
         } catch (error) {
             console.error('lemonutilities: Cannot clone file:', error);
         }
-    },
+    },    
 
     cloneDir(directoryPath, destinationFolderPath) {
         try {
@@ -181,39 +191,43 @@ const file = {
                 console.error('lemonutilities: Cannot clone directory: Specified source directory does not exist or is not accessible.');
                 return;
             }
-      
+    
+            if (!this.checkPathExists(destinationFolderPath)) {
+                fs.mkdirSync(destinationFolderPath, { recursive: true });
+            }
+    
             if (!this.checkPathAccessible(destinationFolderPath)) {
-                console.error('lemonutilities: Cannot clone directory: Specified destination directory does not exist or is not accessible.');
+                console.error('lemonutilities: Cannot clone directory: Specified destination directory is not accessible.');
                 return;
             }
-      
+    
             const dirName = path.basename(directoryPath);
             const destinationFilePath = path.join(destinationFolderPath, dirName);
-      
+    
             if (this.checkPathExists(destinationFilePath)) {
                 console.error('lemonutilities: Cannot clone directory: Another directory with the same name already exists.');
                 return;
             }
-      
+    
             fs.mkdirSync(destinationFilePath);
-      
+    
             const items = fs.readdirSync(directoryPath);
             for (const item of items) {
                 const sourceItemPath = path.join(directoryPath, item);
                 const destinationItemPath = path.join(destinationFilePath, item);
-      
+    
                 const itemStats = fs.statSync(sourceItemPath);
-      
-            if (itemStats.isDirectory()) {
-                this.cloneDir(sourceItemPath, destinationItemPath);
-            } else if (itemStats.isFile()) {
+    
+                if (itemStats.isDirectory()) {
+                    this.cloneDir(sourceItemPath, destinationItemPath);
+                } else if (itemStats.isFile()) {
                     this.cloneFile(sourceItemPath, destinationItemPath);
                 }
             }
         } catch (error) {
             console.error('lemonutilities: Cannot clone directory:', error);
         }
-    },
+    },        
 
     calculateDirSize(directoryPath) {
         try {
@@ -299,7 +313,7 @@ const cli = {
         });
 
         return new Promise(resolve => {
-            rl.question('>', answer => {
+            rl.question('\n> ', answer => {
                 rl.close();
                 resolve(answer);
             });
@@ -307,28 +321,36 @@ const cli = {
     },
 
     editLastLine(text) {
+        process.stdout.moveCursor(0, -1);
         process.stdout.clearLine(-1);
         process.stdout.cursorTo(0);
         process.stdout.write(text);
+        process.stdout.moveCursor(0, 1);
+        process.stdout.cursorTo(0);
     },
 
-    async wait(seconds) {
+    async wait(seconds, showCountdown) {
         return new Promise(resolve => {
             let remaining = seconds;
-
-            console.log(`\nWaiting... ${remainingTime}`);
-
+    
+            if (showCountdown) {
+                console.log(`\nWaiting... ${remaining}`);
+            }
+    
             const countdown = setInterval(() => {
-                this.editLastLine(`Waiting... ${remaining}`);
                 remaining--;
-
+    
+                if (showCountdown) {
+                    this.editLastLine(`Waiting... ${remaining}`);
+                }
+    
                 if (remaining <= 0) {
                     clearInterval(countdown);
                     resolve();
                 }
             }, 1000);
         });
-    },
+    },    
 
     async pause() {
         return new Promise(resolve => {
